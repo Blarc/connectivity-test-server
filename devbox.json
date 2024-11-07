@@ -3,7 +3,7 @@
   "packages": [
     "go-task@3.39.2",
     "terraform@1.9.8",
-    "google-cloud-sdk@494.0.0"
+    "path:gcloud#google-cloud-sdk"
   ],
   "shell": {
     "init_hook": [
