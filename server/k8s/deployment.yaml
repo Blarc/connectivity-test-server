@@ -7,11 +7,11 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: connectivity-test
+      app: connectivity-test-server
   template:
     metadata:
       labels:
-        app: connectivity-test
+        app: connectivity-test-server
     spec:
       containers:
         - name: connectivity-test-server
@@ -35,10 +35,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: connectivity-test-service
+  name: connectivity-test-server
+  namespace: connectivity-test-server
 spec:
   selector:
-    app: connectivity-test
+    app: connectivity-test-server
   ports:
     - protocol: TCP
       port: 80
