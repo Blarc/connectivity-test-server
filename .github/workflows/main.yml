@@ -24,7 +24,9 @@ jobs:
       packages: write
       attestations: write
       id-token: write
-    environment: production
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.external_ip }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -85,11 +87,40 @@ jobs:
           mv kustomize /usr/local/bin
       # Deploy the Docker image to the GKE cluster
       - name: Deploy
+        id: deploy
         run: |-
           cd server/k8s
           kustomize edit set image "${{ env.GKE_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cts-registry/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           kustomize build . | kubectl apply -f -
+          
+          namespace="$(yq e 'select(.kind == "Deployment") | .metadata.namespace' deployment.yaml)"
+          deployment_name="$(yq e 'select(.kind == "Deployment") | .metadata.name' deployment.yaml)"
+          
           kubectl rollout status \
-            -n "$(yq e 'select(.kind == "Deployment") | .metadata.namespace' deployment.yaml)" \
-            "deployment/$(yq e 'select(.kind == "Deployment") | .metadata.name' deployment.yaml)"
-          kubectl get services -o wide
+            -n "$namespace" \
+            "deployment/$deployment_name"
+          
+          kubectl get svc -o wide -n "$namespace"
+          
+          service_name="$(yq e 'select(.kind == "Service") | .metadata.name' deployment.yaml)"
+          echo "$service_name"
+          
+          external_ip=""
+          retries=0
+          max_retries=60
+          
+          echo "Starting the loop to wait for external IP..."
+          while [ -z "$external_ip" ]; do
+            echo "Waiting for external IP: $retries..."
+            (( retries += 1 ))
+            if [ "$retries" -ge "$max_retries" ]; then
+              echo "Timed out waiting for an external IP after $retries retries."
+              exit 1
+            fi
+            external_ip=$(kubectl get svc -n "$namespace" "$service_name" -o yaml | yq '.status.loadBalancer.ingress[0].ip // ""')
+            [ -n "$external_ip" ] && break
+            sleep 5
+          done
+          
+          echo "Endpoint ready: $external_ip"
+          echo "external_ip=$external_ip" >> $GITHUB_OUTPUT
