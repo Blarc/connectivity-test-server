@@ -35,7 +35,11 @@ resource "google_project_iam_member" "github-actions-cluster-viewer" {
   member  = "serviceAccount:${google_service_account.github-actions-sa.email}"
 }
 
-
+resource "google_project_iam_member" "github-actions-registry-writer" {
+  project = var.projectId
+  role    = "roles/artifactregistry.writer"
+  member  = "serviceAccount:${google_service_account.github-actions-sa.email}"
+}
 
 resource "google_service_account_key" "github-actions-key" {
   service_account_id = google_service_account.github-actions-sa.name
