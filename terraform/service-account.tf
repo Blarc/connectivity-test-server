@@ -37,6 +37,7 @@ resource "google_project_iam_member" "github-actions-cluster-viewer" {
 
 resource "google_project_iam_member" "github-actions-registry-writer" {
   project = var.projectId
+  // https://cloud.google.com/artifact-registry/docs/access-control#roles
   role    = "roles/artifactregistry.writer"
   member  = "serviceAccount:${google_service_account.github-actions-sa.email}"
 }
