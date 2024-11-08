@@ -89,5 +89,7 @@ jobs:
           cd server/k8s
           kustomize edit set image "${{ env.GKE_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cts-registry/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           kustomize build . | kubectl apply -f -
-          kubectl rollout status "deployment/$(yq e 'select(.kind == "Deployment") | .metadata.name' deployment.yaml)"
+          kubectl rollout status \
+            -n "$(yq e 'select(.kind == "Deployment") | .metadata.namespace' deployment.yaml)" \
+            "deployment/$(yq e 'select(.kind == "Deployment") | .metadata.name' deployment.yaml)"
           kubectl get services -o wide
