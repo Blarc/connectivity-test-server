@@ -7,10 +7,10 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: blarc/connectivity-test-server
+  IMAGE_NAME: connectivity-test-server
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: autopilot-cluster
-  GKE_ZONE: europe-west1
+  GKE_REGION: europe-west1
 
 jobs:
   build-test-deploy:
@@ -37,7 +37,24 @@ jobs:
         with:
           name: test-results
           path: server/test-results.json
-      - name: Log in to the Container registry
+      # Setup gcloud CLI
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GKE_SA_KEY }}
+      # Setup gcloud CLI
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GKE_PROJECT }}
+      # Get the GKE credentials so we can deploy to the cluster
+      - uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_REGION }}
+      - name: "Log in to Google Cloud Container registry"
+        run: |-
+          gcloud auth configure-docker ${{ env.GKE_REGION }}-docker.pkg.dev --quiet
+      - name: Log in to GitHub Container registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -49,19 +66,7 @@ jobs:
         with:
           context: server
           push: true
-          tags: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          tags: |
+            "${{ env.REGISTRY }}/blarc/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+            "${{ env.GKE_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cts-registry/${{ env.IMAGE_NAME }}:${{ github.sha }}"
           file: server/Dockerfile
-      # Setup gcloud CLI
-      - id: auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GKE_SA_KEY }}
-      # Setup gcloud CLI
-      - uses: google-github-actions/setup-gcloud@1bee7de035d65ec5da40a31f8589e240eba8fde5
-        with:
-          project_id: ${{ secrets.GKE_PROJECT }}
-      # Get the GKE credentials so we can deploy to the cluster
-      - uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
-        with:
-          cluster_name: ${{ env.GKE_CLUSTER }}
-          location: ${{ env.GKE_ZONE }}

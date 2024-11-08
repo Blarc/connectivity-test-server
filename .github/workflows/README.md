@@ -1,6 +1,12 @@
 # GitHub Actions
 
+## Secrets
+The following secrets need to be set for GitHub actions:
+- `GKE_PROJECT`: GKE project id
+- `GKE_SA_KEY`: base64 encoded key of the service account
+
 ## Create service account for GKE
+**Deprecated**: automated with terraform.
 
 https://docs.github.com/en/actions/use-cases-and-examples/deploying/deploying-to-google-kubernetes-engine#configuring-a-service-account-and-storing-its-credentials
 
