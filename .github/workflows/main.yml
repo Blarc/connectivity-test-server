@@ -5,6 +5,7 @@ on:
     workflow_dispatch:
     paths:
       - server/**
+      - .github/workflows/**
     branches:
       - main
 
