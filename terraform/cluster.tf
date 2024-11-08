@@ -48,15 +48,3 @@ resource "google_container_cluster" "autopilot-cluster" {
   # accidentally delete this instance by use of Terraform.
   deletion_protection = false
 }
-
-output "cluster_name" {
-  value = google_container_cluster.autopilot-cluster.name
-}
-
-output "cluster_endpoint" {
-  value = google_container_cluster.autopilot-cluster.endpoint
-}
-
-output "network_name" {
-  value = google_compute_network.cts-network.name
-}

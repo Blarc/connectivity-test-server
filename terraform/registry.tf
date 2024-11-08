@@ -11,6 +11,10 @@ resource "google_artifact_registry_repository" "cts-registry" {
   docker_config {
     immutable_tags = false
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 output "registry-id" {

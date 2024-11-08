@@ -14,6 +14,10 @@ resource "google_service_account" "github-actions-sa" {
   description  = "Service account used by Github Actions."
   project      = var.projectId
   # create_ignore_already_exists = true
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # source: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account_iam
@@ -21,18 +25,30 @@ resource "google_project_iam_member" "github-actions-container-admin" {
   project = var.projectId
   role    = "roles/container.admin"
   member  = "serviceAccount:${google_service_account.github-actions-sa.email}"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_project_iam_member" "github-actions-storage-admin" {
   project = var.projectId
   role    = "roles/storage.admin"
   member  = "serviceAccount:${google_service_account.github-actions-sa.email}"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_project_iam_member" "github-actions-cluster-viewer" {
   project = var.projectId
   role    = "roles/container.clusterViewer"
   member  = "serviceAccount:${google_service_account.github-actions-sa.email}"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_project_iam_member" "github-actions-registry-writer" {
@@ -40,17 +56,29 @@ resource "google_project_iam_member" "github-actions-registry-writer" {
   // https://cloud.google.com/artifact-registry/docs/access-control#roles
   role    = "roles/artifactregistry.writer"
   member  = "serviceAccount:${google_service_account.github-actions-sa.email}"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_service_account_key" "github-actions-key" {
   service_account_id = google_service_account.github-actions-sa.name
   public_key_type    = "TYPE_RAW_PUBLIC_KEY"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Save the private key to a local file
 resource "local_file" "github-actions-key-file" {
   content  = base64decode(google_service_account_key.github-actions-key.private_key)
   filename = "${path.module}/github-actions-key.json"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Output a message guiding users on handling the private key securely
