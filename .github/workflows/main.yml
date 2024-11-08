@@ -51,7 +51,7 @@ jobs:
         with:
           project_id: ${{ secrets.GKE_PROJECT }}
       # Get the GKE credentials so we can deploy to the cluster
-      - uses: google-github-actions/get-gke-credentials@db150f2cc60d1716e61922b832eae71d2a45938f
+      - uses: google-github-actions/get-gke-credentials@v2
         with:
           cluster_name: ${{ env.GKE_CLUSTER }}
           location: ${{ env.GKE_REGION }}
@@ -72,5 +72,22 @@ jobs:
           push: true
           tags: |
             "${{ env.REGISTRY }}/blarc/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+            "${{ env.REGISTRY }}/blarc/${{ env.IMAGE_NAME }}:latest"
             "${{ env.GKE_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cts-registry/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+            "${{ env.GKE_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cts-registry/${{ env.IMAGE_NAME }}:latest"
           file: server/Dockerfile
+      # Set up kustomize
+      - name: Set up Kustomize
+        run: |-
+          curl -sfLo kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v5.5.0/kustomize_v5.5.0_linux_amd64.tar.gz
+          tar -xzf kustomize.tar.gz
+          chmod u+x kustomize
+          mv kustomize /usr/local/bin
+      # Deploy the Docker image to the GKE cluster
+      - name: Deploy
+        run: |-
+          cd server/k8s
+          kustomize edit set image "${{ env.GKE_REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cts-registry/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          kustomize build . | kubectl apply -f -
+          kubectl rollout status "deployment/$(yq e 'select(.kind == "Deployment") | .metadata.name' deployment.yaml)"
+          kubectl get services -o wide
