@@ -13,7 +13,7 @@ resource "google_service_account" "github-actions-sa" {
   display_name = "Github Actions"
   description  = "Service account used by Github Actions."
   project      = var.projectId
-  # create_ignore_already_exists = true
+  create_ignore_already_exists = true
 
   lifecycle {
     prevent_destroy = true

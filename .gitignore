@@ -1,3 +1,4 @@
 .idea
 connectivity-test-server.iml
-/terraform/.terraform/
+/**/.terraform/
+/**/.terragrunt-cache/

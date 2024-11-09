@@ -3,6 +3,7 @@
 # Source: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/artifact_registry_repository
 
 resource "google_artifact_registry_repository" "cts-registry" {
+  project       = var.projectId
   location      = var.region
   repository_id = "cts-registry"
   description   = "Repository for connection test server project."

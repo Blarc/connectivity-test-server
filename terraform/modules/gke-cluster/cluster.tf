@@ -1,12 +1,12 @@
 resource "google_compute_network" "cts-network" {
-  name = "cts-network"
+  name = "${var.env}-${var.region}-cts-network"
 
   auto_create_subnetworks  = false
   enable_ula_internal_ipv6 = true
 }
 
 resource "google_compute_subnetwork" "cts-subnetwork" {
-  name = "cts-subnetwork"
+  name = "${var.env}-${var.region}-cts-subnetwork"
 
   ip_cidr_range = "10.0.0.0/16"
   region        = var.region
@@ -28,7 +28,7 @@ resource "google_compute_subnetwork" "cts-subnetwork" {
 }
 
 resource "google_container_cluster" "autopilot-cluster" {
-  name = "autopilot-cluster"
+  name = "${var.env}-${var.region}-cts-cluster"
 
   location                 = var.region
   enable_autopilot         = true
@@ -47,4 +47,18 @@ resource "google_container_cluster" "autopilot-cluster" {
   # Set `deletion_protection` to `true` will ensure that one cannot
   # accidentally delete this instance by use of Terraform.
   deletion_protection = false
+}
+
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/gke_hub_membership
+resource "google_gke_hub_membership" "membership" {
+  membership_id = "${var.env}-${var.region}-cts-cluster"
+  endpoint {
+    gke_cluster {
+      resource_link = "//container.googleapis.com/${google_container_cluster.autopilot-cluster.id}"
+    }
+  }
+
+  labels = {
+    env = var.env
+  }
 }
