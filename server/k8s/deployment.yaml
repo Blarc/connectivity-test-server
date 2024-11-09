@@ -13,6 +13,29 @@ spec:
       labels:
         app: connectivity-test-server
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            # Preferred anti-affinity for cross-zone distribution
+            - weight: 50
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - connectivity-test-server
+                topologyKey: "topology.kubernetes.io/zone"
+            # Preferred anti-affinity for node-level distribution within zones
+            - weight: 50
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - connectivity-test-server
+                topologyKey: "kubernetes.io/hostname"
       containers:
         - name: connectivity-test-server
           image: ghcr.io/blarc/connectivity-test-server:latest
@@ -25,6 +48,8 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 5
           resources:
+            # GKE Autopilot adjusts these because they are bellow minimum
+            # https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-resource-requests#min-max-requests
             requests:
               cpu: "10m"
               memory: "16Mi"
