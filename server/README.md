@@ -49,7 +49,6 @@ the following tools:
    ```
 
 ## Push to Google Cloud container registry
-
 https://cloud.google.com/artifact-registry/docs/docker/store-docker-container-images
 
 1. Authenticate with the registry (default value for variable `$REGION` set in terraform variables is `europe-west1`)
@@ -84,6 +83,8 @@ https://cloud.google.com/artifact-registry/docs/docker/store-docker-container-im
    ```bash
    # set the image tag to the one you built
    kustomize edit set image "${REGION}-docker.pkg.dev/${PROJECT_ID}/cts-registry/connectivity-test-server:local"
+   # OPTIONAL: use the image from GitHub registry
+   kustomize edit set image ghcr.io/blarc/connectivity-test-server:latest
    # apply the configuration
    kustomize build . -f | kubectl apply -f -
    ```
