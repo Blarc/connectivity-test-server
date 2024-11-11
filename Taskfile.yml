@@ -6,7 +6,9 @@ vars:
   GREETING: Hello, World!
 
 tasks:
-  default:
-    cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+  plan-common:
+    - terragrunt run-all plan --terragrunt-include-dir common
+  apply-common:
+    - terragrunt run-all apply --terragrunt-include-dir common
+  plan-prod:
+    - terragrunt run-all plan --terragrunt-include-dir prod

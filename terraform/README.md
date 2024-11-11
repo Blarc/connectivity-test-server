@@ -17,12 +17,19 @@ https://cloud.google.com/kubernetes-engine/docs/quickstarts/create-cluster-using
    ```
 3. To create a GKE cluster, you need to enable API `container.googleapis.com`, you can do this by running the following command:
    ```bash
+   # Deprecated: automated with terraform.
    gcloud services enable container.googleapis.com
+   ```
+4. To manage multiple GKE clusters Google cloud uses Fleets. To enable the api run the following command:
+   ```bash
+   # Deprecated: automated with terraform.
+   gcloud services enable gkehub.googleapis.com
    ```
 ### Google Cloud Container Registry
 **Deprecated**: This is automated with terraform.
 1. To use the Google cloud container registry, you need to enable API `artifactregistry.googleapis.com`:
    ```bash
+   # Deprecated: automated with terraform.
    gcloud services enable artifactregistry.googleapis.com
    ```
 2. Create a container registry repository:
