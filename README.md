@@ -16,6 +16,7 @@ A simple connectivity test backend server deployed on GKE cluster using Terrafor
 - figure out how to manage deployments over multiple clusters
 - manage Terraform state with remote S3
 - use [Crossplane](https://www.crossplane.io/) instead of Terraform
+- use devbox in GitHub Actions
 
 More detailed ideas about these points can be found in [docs/ideas.md](docs/ideas.md).
 

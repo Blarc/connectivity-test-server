@@ -33,3 +33,9 @@ An interesting and more cloud-native approach to managing the state of the deplo
 offers [Crossplane](https://www.crossplane.io/). Although I don't have any experience with it, it would be very
 interesting to explore this option, because it uses the Kubernetes API to manage the componentes, which I am much more
 familiar with than Terraform.
+
+## Use devbox in GitHub actions
+
+Devbox creates isolated, reproducible development environment and can also be used in GitHub actions instead of using
+predefined actions and installing tools manually. This way we would also remove the need to specify the tools' versions
+at multiple places and make management of the project easier.
