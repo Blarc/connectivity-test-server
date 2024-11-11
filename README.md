@@ -17,7 +17,7 @@ A simple connectivity test backend server deployed on GKE cluster using Terrafor
 - manage Terraform state with remote S3
 - use [Crossplane](https://www.crossplane.io/) instead of Terraform
 
-More detailed ideas about these points can be found in [docs/ideas.md](ideas.md).
+More detailed ideas about these points can be found in [docs/ideas.md](docs/ideas.md).
 
 ## Setting up the environment
 
