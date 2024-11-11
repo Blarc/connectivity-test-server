@@ -70,3 +70,4 @@ https://cloud.google.com/artifact-registry/docs/docker/store-docker-container-im
 2. Push to the registry:
    ```bash
    docker push europe-west1-docker.pkg.dev/$PROJECT_ID/cts-registry/connectivity-test-server:test1
+   ```
