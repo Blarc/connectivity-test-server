@@ -4,7 +4,10 @@
     "go-task@3.39.2",
     "terraform@1.9.8",
     "path:gcloud#google-cloud-sdk",
-    "terragrunt@0.67.9"
+    "terragrunt@0.67.9",
+    "kubectl@1.31.2",
+    "kustomize@5.5.0",
+    "podman@5.2.3"
   ],
   "shell": {
     "init_hook": [
