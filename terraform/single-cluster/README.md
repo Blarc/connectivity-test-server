@@ -28,15 +28,15 @@ You will also need a valid project on Google cloud with billing.
    ```
 3. Initialize terraform:
    ```bash
-   terragrunt init
+   terraform init
    ```
 4. Plan the creation of cluster:
    ```bash
-   terragrunt run-all plan
+   terraform plan
    ```
-5. Create cluster with terragrunt:
+5. Create cluster with terraform:
    ```bash
-   terragrunt run-all apply
+   terraform apply
    ```
 
 ## Destroy the cluster
